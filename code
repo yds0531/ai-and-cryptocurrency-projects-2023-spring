@@ -1,0 +1,51 @@
+import time
+import requests
+import pandas as pd
+import datetime
+import os
+
+fn = "C:/Users/10/Desktop/2023-05-04-UPBIT-BTC-orderbook.csv"  # 파일 경로 정의
+
+start_time = datetime.datetime.now()
+end_time = start_time + datetime.timedelta(hours=24)
+
+while datetime.datetime.now() < end_time:
+   
+    book = {}
+    response = requests.get ('https://api.upbit.com/v1/orderbook?markets=KRW-BTC&count=5',)
+    book = response.json()
+
+    data = book[0]
+
+    bids = pd.DataFrame(data['orderbook_units'])[['bid_price', 'bid_size']]
+    bids = bids.rename(columns={"bid_price": "price", "bid_size": "quantity"})
+    bids['type'] = 0
+    bids = bids.sort_values('price', ascending=False)
+
+    asks = pd.DataFrame(data['orderbook_units'])[['ask_price', 'ask_size']]
+    asks = asks.rename(columns={"ask_price": "price", "ask_size": "quantity"})
+    asks['type'] = 1
+    asks = asks.sort_values('price', ascending=True)
+
+    df = pd.concat([bids.head(5), asks.head(5)], ignore_index=True)
+
+    timestamp = datetime.datetime.now()
+    req_timestamp = timestamp.strftime('%Y-%m-%d %H:%M:%S')
+
+    df['quantity'] = df['quantity'].round(decimals=4)
+    df['timestamp'] = req_timestamp
+      
+    print(df)
+    print("\n")
+
+    df.to_csv(fn, index=False, header=not os.path.exists(fn), mode='a')
+
+    should_write_header = os.path.exists(fn)
+    if should_write_header == False:
+        df.to_csv(fn, index=False, header=True, mode = 'a')
+    else:
+        df.to_csv(fn, index=False, header=False, mode = 'a')
+
+
+c    time.sleep(1)
+    continue;
