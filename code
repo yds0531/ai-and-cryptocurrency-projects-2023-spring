@@ -4,10 +4,10 @@ import pandas as pd
 import datetime
 import os
 
-fn = "C:/Users/10/Desktop/2023-05-04-UPBIT-BTC-orderbook.csv"  # 파일 경로 정의
+fn = "C:/Users/10/Desktop/yds.csv"  # 파일 경로 정의
 
 start_time = datetime.datetime.now()
-end_time = start_time + datetime.timedelta(hours=24)
+end_time = start_time + datetime.timedelta(hours=48)
 
 while datetime.datetime.now() < end_time:
    
@@ -34,7 +34,7 @@ while datetime.datetime.now() < end_time:
 
     df['quantity'] = df['quantity'].round(decimals=4)
     df['timestamp'] = req_timestamp
-      
+
     print(df)
     print("\n")
 
@@ -45,7 +45,6 @@ while datetime.datetime.now() < end_time:
         df.to_csv(fn, index=False, header=True, mode = 'a')
     else:
         df.to_csv(fn, index=False, header=False, mode = 'a')
-
 
     time.sleep(1)
     continue;
